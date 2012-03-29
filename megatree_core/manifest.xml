@@ -1,0 +1,26 @@
+<package>
+  <description brief="megatree_core">
+
+     megatree_core
+
+  </description>
+  <author>Stuart Glaser</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/megatree_core</url>
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lmegatree_core" />
+  </export>
+
+  <!--
+     megatree_core exists to reduce the dependencies of mapreduce
+     programs.  The mapreduce programs require Node and NodeFile
+     classes, but should avoid dependencies on ROS, PCL, thrift, or
+     any messages.
+
+     If you are adding dependencies here, you are probably doing the
+     wrong thing.
+    -->
+</package>
+
+
