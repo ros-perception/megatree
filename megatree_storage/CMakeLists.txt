@@ -42,7 +42,6 @@ rosbuild_add_library(megatree_storage
 
   src/hbase_storage.cpp
   src/compress.cpp
-  src/storage_client_ros.cpp
   src/disk_storage.cpp
   src/viz_storage.cpp
   src/storage_factory.cpp
@@ -55,10 +54,6 @@ target_link_libraries(megatree_storage thrift)
 
 rosbuild_add_executable(bin/test_compress src/test_compress.cpp)
 target_link_libraries(bin/test_compress megatree_storage)
-
-rosbuild_add_executable(bin/storage_server_ros src/storage_server_ros.cpp)
-target_link_libraries(bin/storage_server_ros boost_filesystem boost_iostreams)
-target_link_libraries(bin/storage_server_ros megatree_storage)
 
 rosbuild_add_executable(bin/streaming_server src/streaming_server.cpp)
 target_link_libraries(bin/streaming_server boost_filesystem boost_iostreams)

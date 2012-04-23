@@ -3,7 +3,6 @@
 #include <megatree/viz_storage.h>
 #include <megatree/disk_storage.h>
 #include <megatree/hbase_storage.h>
-#include <megatree/storage_client_ros.h>
 
 namespace megatree {
 
@@ -14,9 +13,6 @@ int storageType(const boost::filesystem::path &path)
   if (path.string().substr(0, 8) == std::string("hbase://"))
     return HBASE_STORAGE;
   
-  if (path.string().substr(0,6) == std::string("ros://"))
-    return CLIENT_STORAGE;
-
   return DISK_STORAGE;
 }
 
@@ -37,32 +33,8 @@ boost::shared_ptr<Storage> openStorage(const boost::filesystem::path &path, unsi
       case HBASE_STORAGE:
         storage.reset(new HbaseStorage(path));
         break;
-      case CLIENT_STORAGE:
-        storage.reset(new StorageClient(path));
-        break;
       case UNKNOWN_STORAGE:
         fprintf(stderr, "Unknown storage type for format 1: %s\n", path.string().c_str());
-        storage.reset();
-        break;
-      default:
-        abort();
-        break;
-      }
-    }
-    break;
-
-  case VIZ_FORMAT:
-    {
-      switch (storage_type)
-      {
-      case DISK_STORAGE:
-        storage.reset(new VizStorage(path));
-        break;
-      case HBASE_STORAGE:
-        storage.reset(new VizStorage(path));
-        break;
-      case UNKNOWN_STORAGE:
-        fprintf(stderr, "Unknown storage type for format 2: %s\n", path.string().c_str());
         storage.reset();
         break;
       default:

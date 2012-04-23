@@ -1,2 +1,0 @@
-string path
-uint8 compression_method
