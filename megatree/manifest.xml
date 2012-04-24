@@ -12,10 +12,6 @@
   <depend package="megatree_core" />
   <depend package="megatree_storage" />
 
-  <depend package="roscpp" />
-  <depend package="geometry_msgs" />
-  <depend package="actionlib" />
-
   <rosdep name="eigen"/>
 
   <export>

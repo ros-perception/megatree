@@ -11,9 +11,6 @@
 
   <depend package="megatree_core" />
 
-  <depend package="roscpp" />
-  <depend package="geometry_msgs" />
-
   <export>
     <cpp cflags="-I${prefix}/include `rosboost-cfg --cflags`" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib `rosboost-cfg --lflags thread` -lmegatree_storage"/>
   </export>

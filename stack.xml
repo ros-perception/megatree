@@ -1,0 +1,13 @@
+<stack>
+  <description brief="Mega out-of-core Octree">
+    <tt>Megatree</tt> contains packages for large out-of-core octrees
+  </description>
+  <author>Wim Meeussen, Eitan Marder-Eppstein, Stuart Glaser</author>
+  <license>BSD,GPL,MIT</license>  
+  <review status="unreviewed" notes=""/>
+
+  <url>http://ros.org/wiki/megatree</url>
+
+  <depend stack="ros" /> 
+
+</stack>
