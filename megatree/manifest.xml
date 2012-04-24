@@ -13,7 +13,6 @@
   <depend package="megatree_storage" />
 
   <depend package="roscpp" />
-  <depend package="opencv2" />
   <depend package="geometry_msgs" />
   <depend package="actionlib" />
 

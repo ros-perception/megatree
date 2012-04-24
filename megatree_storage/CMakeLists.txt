@@ -13,10 +13,6 @@ set(ROS_BUILD_TYPE RelWithDebInfo)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
-rosbuild_find_ros_package(actionlib_msgs)
-include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
-genaction()
-
 rosbuild_init()
 
 #set the default path for built executables to the "bin" directory
@@ -25,35 +21,44 @@ rosbuild_init()
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #uncomment if you have defined messages
-rosbuild_genmsg()
+#rosbuild_genmsg()
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
 add_definitions(-Wno-missing-field-initializers)  # For argp_parse
 
-find_package(Thrift)
-include_directories(${THRIFT_INCLUDE_DIRS})
-include_directories(${PROJECT_SOURCE_DIR}/thrift_gen)
+# un-comment to start using hbase. You need to install Thrift and Hbase for this to work
+#set(USE_HBASE 1)
 
+
+if (USE_HBASE)
+  set(CMAKE_CXX_FLAGS "-DUSE_HBASE")
+  find_package(Thrift)
+  include_directories(${THRIFT_INCLUDE_DIRS})
+  include_directories(${PROJECT_SOURCE_DIR}/thrift_gen)
+ENDIF (USE_HBASE)
+
+if (USE_HBASE)
 rosbuild_add_library(megatree_storage
   thrift_gen/Hbase_constants.cpp
   thrift_gen/Hbase_types.cpp
   thrift_gen/Hbase.cpp
-
   src/hbase_storage.cpp
-  src/compress.cpp
+  )
+ENDIF (USE_HBASE)
+
+rosbuild_add_library(megatree_storage
   src/disk_storage.cpp
-  src/viz_storage.cpp
   src/storage_factory.cpp
   )
 
 target_link_libraries(megatree_storage boost_iostreams boost_filesystem boost_system boost_program_options)
-target_link_libraries(megatree_storage thrift)
+if (USE_HBASE)
+  target_link_libraries(megatree_storage thrift)
+ENDIF (USE_HBASE)
+
 #target_link_libraries(megatree_storage profiler)  # google-perftools profiler
 #target_link_libraries(megatree_storage tcmalloc)  # google-perftools tcmalloc
-
-rosbuild_add_executable(bin/test_compress src/test_compress.cpp)
-target_link_libraries(bin/test_compress megatree_storage)
 
 rosbuild_add_executable(bin/streaming_server src/streaming_server.cpp)
 target_link_libraries(bin/streaming_server boost_filesystem boost_iostreams)

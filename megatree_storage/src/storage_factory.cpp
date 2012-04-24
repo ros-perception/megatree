@@ -2,7 +2,10 @@
 
 #include <megatree/viz_storage.h>
 #include <megatree/disk_storage.h>
-#include <megatree/hbase_storage.h>
+
+#ifdef USE_HBASE
+  #include <megatree/hbase_storage.h>
+#endif
 
 namespace megatree {
 
@@ -30,9 +33,13 @@ boost::shared_ptr<Storage> openStorage(const boost::filesystem::path &path, unsi
       case DISK_STORAGE:
         storage.reset(new DiskStorage(path));
         break;
+
+#ifdef USE_HBASE        
       case HBASE_STORAGE:
         storage.reset(new HbaseStorage(path));
         break;
+#endif
+
       case UNKNOWN_STORAGE:
         fprintf(stderr, "Unknown storage type for format 1: %s\n", path.string().c_str());
         storage.reset();
@@ -84,9 +91,13 @@ void removePath(const boost::filesystem::path &path)
   case DISK_STORAGE:
     boost::filesystem::remove_all(path);
     break;
+
+#ifdef USE_HBASE        
   case HBASE_STORAGE:
     removeHbasePath(path);
     break;
+#endif
+
   case UNKNOWN_STORAGE:
     fprintf(stderr, "Unknown storage type: %s\n", path.string().c_str());
     break;

@@ -10,6 +10,7 @@ using namespace megatree;
 
 TEST(LongId, TreeLevel)
 {
+  EXPECT_EQ(0, 0);
   EXPECT_EQ(0, IdType(0).level());
   EXPECT_EQ(1, IdType(01).level());
   EXPECT_EQ(2, IdType(012).level());

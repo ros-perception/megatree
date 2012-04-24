@@ -1,0 +1,16 @@
+<package>
+  <description brief="megatree_import">
+
+     megatree_import
+
+  </description>
+  <author>Wim Meeussen</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/megatree_import</url>
+  <depend package="megatree_storage"/>
+  <depend package="megatree"/>
+
+</package>
+
+

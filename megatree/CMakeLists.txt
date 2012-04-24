@@ -7,8 +7,8 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  Release        : w/o debug symbols, w/ optimization
 #  RelWithDebInfo : w/ debug symbols, w/ optimization
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE Debug)
-set(ROS_BUILD_TYPE RelWithDebInfo)
+set(ROS_BUILD_TYPE Debug)
+#set(ROS_BUILD_TYPE RelWithDebInfo)
 #set(ROS_BUILD_TYPE Release)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
@@ -28,7 +28,7 @@ rosbuild_init()
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #uncomment if you have defined messages
-rosbuild_genmsg()
+#rosbuild_genmsg()
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
@@ -42,8 +42,7 @@ rosbuild_add_library(megatree
   src/megatree.cpp
   src/tree_functions.cpp
   )
-target_link_libraries(megatree sqlite3 boost_iostreams boost_filesystem boost_system boost_program_options)
-target_link_libraries(megatree thrift)
+
 #target_link_libraries(megatree profiler)  # google-perftools profiler
 #target_link_libraries(megatree tcmalloc)  # google-perftools tcmalloc
 
@@ -54,10 +53,6 @@ target_link_libraries(bin/memtest megatree)
 rosbuild_add_executable(bin/bind src/bind.cpp)
 target_link_libraries(bin/bind boost_filesystem boost_iostreams)
 target_link_libraries(bin/bind megatree)
-
-#rosbuild_add_executable(bin/main src/main.cpp)
-#target_link_libraries(bin/main boost_filesystem boost_iostreams)
-#target_link_libraries(bin/main megatree)
 
 rosbuild_add_executable(bin/listtest src/listtest.cpp)
 target_link_libraries(bin/listtest boost_filesystem boost_iostreams)
@@ -71,27 +66,6 @@ rosbuild_add_executable(bin/analyze src/analyze.cpp)
 target_link_libraries(bin/analyze boost_filesystem boost_system)
 target_link_libraries(bin/analyze megatree)
 
-#rosbuild_add_executable(bin/import_sphere src/import_sphere.cpp)
-#target_link_libraries(bin/import_sphere boost_filesystem)
-#target_link_libraries(bin/import_sphere megatree)
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
-find_package(LibLAS)
-if (LIBLAS_FOUND)
-  rosbuild_add_executable(bin/import_las src/import_las.cpp)
-  target_link_libraries(bin/import_las boost_filesystem)
-  target_link_libraries(bin/import_las ${LIBLAS_LIBRARY})
-  target_link_libraries(bin/import_las megatree)
-
-  rosbuild_add_executable(bin/sort_las src/sort_las.cpp)
-  target_link_libraries(bin/sort_las boost_filesystem)
-  target_link_libraries(bin/sort_las ${LIBLAS_LIBRARY})
-  #target_link_libraries(bin/sort_las megatree)
-endif (LIBLAS_FOUND)
-
-rosbuild_add_executable(bin/import_txt src/import_txt.cpp)
-target_link_libraries(bin/import_txt boost_filesystem)
-target_link_libraries(bin/import_txt megatree)
 
 rosbuild_add_executable(bin/benchmark_write src/benchmark_write.cpp)
 target_link_libraries(bin/benchmark_write boost_filesystem boost_iostreams)
@@ -106,10 +80,6 @@ rosbuild_add_gtest(test/test_basics test/test_basics.cpp)
 target_link_libraries(test/test_basics boost_filesystem boost_iostreams)
 target_link_libraries(test/test_basics megatree)
 
-rosbuild_add_gtest(test/test_long_id test/test_long_id.cpp)
-target_link_libraries(test/test_long_id boost_filesystem boost_iostreams)
-target_link_libraries(test/test_long_id megatree)
-
 rosbuild_add_gtest(test/test_list test/test_list.cpp)
 target_link_libraries(test/test_list boost_filesystem boost_iostreams)
 target_link_libraries(test/test_list megatree)
@@ -117,6 +87,10 @@ target_link_libraries(test/test_list megatree)
 rosbuild_add_executable(bin/fixup_root src/fixup_root.cpp)
 target_link_libraries(bin/fixup_root boost_filesystem boost_iostreams)
 target_link_libraries(bin/fixup_root megatree)
+
+rosbuild_add_gtest(test/test_long_id test/test_long_id.cpp)
+target_link_libraries(test/test_long_id boost_filesystem boost_iostreams)
+target_link_libraries(test/test_long_id megatree)
 
 rosbuild_add_executable(bin/repair_from_children src/repair_from_children.cpp)
 target_link_libraries(bin/repair_from_children megatree)
