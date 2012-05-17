@@ -1,0 +1,22 @@
+Make sure fastcgi is installed
+sudo apt-get install libfcgi-dev
+sudo apt-get install libapache2-mod-fastcgi
+sudo apt-get install spawn-fcgi
+
+First change the paths in megatree_web/megatree_site
+
+Then copy it into the apache config folder
+# sudo cp megatree_web/megatree-site /etc/apache2/sites-available
+
+Enable the site
+# cd /etc/apache2/sites-available
+# sudo a2ensite megatree-site
+
+Restart apache
+# sudo service apache restart
+
+Run the server
+# megatree_web/run hbase://tree_location
+
+Add something like this to your /etc/hosts
+"<your ip address> bhc  bhc.willowgarage.com  megatree.local"
