@@ -1,14 +1,15 @@
 <package>
-  <description brief="megatree_web">
+  <description brief="megatree_server">
 
-     megatree_web
+     megatree_server
 
   </description>
-  <author>Wim Meeussen</author>
+  <author>Stuart Glaser</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/megatree_web</url>
+  <url>http://ros.org/wiki/megatree_server</url>
 
+  <depend package="megatree_cpp" />
 </package>
 
 

@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <title>Megatree</title>
+    <script src="load.js"></script>
+    <script src="js/webgl-debug.js"></script>
+    <link rel="stylesheet" href="themes/base/jquery.ui.all.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="themes/ui-lightness/jquery.ui.all.css" type="text/css" media="all" />
+    <style type="text/css">
+      body,img,p,h1,h2,h3,h4,h5,h6,fieldset,form,table,td,ul,li,pre,blockquote,code{ margin:0; padding:0; border:0; }
+      body{ font: 100% Georgia, "Times New Roman", serif; background-color: #ffffff; color: #565656; text-align: center; }
+      div.wrapper{ position: relative; margin: 0  auto 30px auto; width: 500px; text-align: left; border: solid 1px #aaaaaa; }
+      #users{  }
+      #users .user{ border: solid 1px #bbbbbb; background-color: #dddddd; padding: 10px; margin: 5px; }
+      #users .user .controls{ float: right; }
+
+      /*-------------impromptu---------- */
+      .jqifade{ position: absolute; background-color: #aaaaaa; }
+      div.jqi{ width: 400px; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; position: absolute; background-color: #ffffff; font-size: 11px; text-align: left; border: solid 1px #eeeeee; -moz-border-radius: 10px; -webkit-border-radius: 10px; padding: 7px; }
+      div.jqi .jqicontainer{ font-weight: bold; }
+      div.jqi .jqiclose{ position: absolute; top: 4px; right: -2px; width: 18px; cursor: default; color: #bbbbbb; font-weight: bold; }
+      div.jqi .jqimessage{ padding: 10px; line-height: 20px; color: #444444; }
+      div.jqi .jqibuttons{ text-align: right; padding: 5px 0 5px 0; border: solid 1px #eeeeee; background-color: #f4f4f4; }
+      div.jqi button{ padding: 3px 10px; margin: 0 10px; background-color: #2F6073; border: solid 1px #f4f4f4; color: #ffffff; font-weight: bold; font-size: 12px; }
+      div.jqi button:hover{ background-color: #728A8C; }
+      div.jqi button.jqidefaultbutton{ background-color: #BF5E26; }
+      .jqiwarning .jqi .jqibuttons{ background-color: #BF5E26; }
+      /*-------------------------------- */
+    </style>
+    <style>
+     .column { width: 350px; position: absolute; float: left; padding-bottom: 100px; left: 35px; top: 15px}
+     .portlet { margin: 0 1em 1em 0;  font-size: 12px;}
+     .portlet-header { margin: 0.3em; padding-bottom: 4px; padding-left: 0.2em; }
+     .portlet-header .ui-icon { float: right; }
+     .portlet-content { padding: 0.4em; }
+     .ui-sortable-placeholder { border: 1px dotted black; visibility: visible !important; height: 50px !important; }
+     .ui-sortable-placeholder * { visibility: hidden; }
+     #view_list, #job_list, #settings_list, #status_list, #help_list { list-style-type: none; margin: 0; padding: 0; margin-bottom: 15px;zoom: 1; }
+     #view_list li, #job_list li, #settings_list li, #status_list li, #help_list li { margin: 0 5px 5px 5px; padding: 5px; font-size: 12px; width: 90%; }
+    </style>
+  </head>
+  <body onLoad="start();" bgcolor="#666666">
+
+  <div id="main">
+
+    <!-- options -->
+    <div class="column">
+      <div class="portlet">
+        <div class="portlet-header">Options</div>
+          <div class="portlet-content">
+            <div id="tabs">
+              <ul>
+                <li><a href="#help_tab">Help</a></li>
+                <li><a href="#views_tab" id="view_tab">Views</a></li>
+                <li><a href="#jobs_tab" id="job_tab">Jobs</a></li>
+                <li><a href="#settings_tab">Settings</a></li>
+                <li><a href="#status_tab">Status</a></li>
+              </ul>
+
+              <div id="help_tab">
+                <div><ul id="help_list"/></div>
+              </div>
+
+              <div id="views_tab">
+                <div><ul id="view_list"/></div>
+                <div>
+                  <input id="view_name" type="text" value=""/>
+                  <button id="add_view"/>
+                </div>
+              </div>
+
+              <div id="jobs_tab">
+                <div><ul id="job_list"/></div>
+                <div>
+                  <input id="job_name" type="text" value=""/>
+                  <button id="start_job"/>
+                </div>
+              </div>
+
+              <div id="settings_tab">
+                <div><ul id="settings_list"/></div>
+              </div>
+
+              <div id="status_tab">
+                <div><ul id="status_list"/></div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <center>
+    <canvas id="canvas" width="640" height="480" tabindex="0" autofocus="1" style="cursor:default"></canvas>
+    <canvas id="textureCanvas" width="128" height="128"></canvas>
+    </center>
+  </div>
+  </body>
+
+</html>
