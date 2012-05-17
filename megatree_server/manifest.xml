@@ -9,6 +9,9 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/megatree_server</url>
 
+ <depend package="megatree_core" />
+ <depend package="megatree_cpp" />
+
 </package>
 
 
