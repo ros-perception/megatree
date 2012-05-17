@@ -1,7 +1,5 @@
 Make sure fastcgi is installed
-sudo apt-get install libfcgi-dev
-sudo apt-get install libapache2-mod-fastcgi
-sudo apt-get install spawn-fcgi
+sudo apt-get install libfcgi-dev libapache2-mod-fastcgi spawn-fcgi
 
 First change the paths in megatree_web/megatree_site
 
