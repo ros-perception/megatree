@@ -36,17 +36,17 @@ void importTxt(MegaTree &tree, const boost::filesystem::path &path, unsigned lon
     fin.getline(line, 1024);
 
     std::vector<std::string> bits;
-    boost::split(bits, line, boost::is_any_of(" "));
-    if (bits.size() != 7)
+    boost::split(bits, line, boost::is_any_of(" ,"));
+    if (bits.size() != 6)
       continue;
 
     point[0] = atof(bits[0].c_str());
     point[1] = atof(bits[1].c_str());
     point[2] = atof(bits[2].c_str());
 
-    color[0] = atoi(bits[4].c_str());
-    color[1] = atoi(bits[5].c_str());
-    color[2] = atoi(bits[6].c_str());
+    color[0] = atoi(bits[3].c_str());
+    color[1] = atoi(bits[4].c_str());
+    color[2] = atoi(bits[5].c_str());
     
     if (i % 100000 == 0) {
       //printf("Adding %u\n", i);
