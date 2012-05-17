@@ -10,8 +10,6 @@
   <url>http://ros.org/wiki/megatree_server</url>
 
   <depend package="megatree" />
-  <depend package="megatree_algorithms" />
-
 </package>
 
 

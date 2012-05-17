@@ -19,9 +19,6 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_add_executable(server src/server.cpp)
 target_link_libraries(server fcgi)
 
-rosbuild_add_executable(algorithm_server src/algorithm_server.cpp)
-target_link_libraries(algorithm_server fcgi)
-
 #uncomment if you have defined messages
 #rosbuild_genmsg()
 #uncomment if you have defined services

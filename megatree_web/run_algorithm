@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-spawn-fcgi -n -p 9001  `rospack find megatree_web`/bin/algorithm_server $1 
-
