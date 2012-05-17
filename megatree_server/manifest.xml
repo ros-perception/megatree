@@ -12,6 +12,8 @@
  <depend package="megatree_core" />
  <depend package="megatree_cpp" />
 
+ <rosdep name="fcgi" />
+
 </package>
 
 
