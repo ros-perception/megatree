@@ -9,7 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/megatree_import</url>
   <depend package="megatree_storage"/>
-  <depend package="megatree"/>
+  <depend package="megatree_cpp"/>
 
 </package>
 
