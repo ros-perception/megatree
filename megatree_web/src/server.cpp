@@ -168,18 +168,18 @@ int main(int argc, char** argv)
   }
 
   std::vector<std::string> trees;
-  trees.push_back("chappes");
-  trees.push_back("bourges");
-  trees.push_back("tahoe_all");
-  trees.push_back("tahoe_roads");
-  trees.push_back("kendall_all");
+  //trees.push_back("chappes");
+  //trees.push_back("bourges");
+  //trees.push_back("tahoe_all");
+  //trees.push_back("tahoe_roads");
+  //trees.push_back("kendall_all");
   //trees.push_back("car");
 
   if (argc > 1)
     trees.push_back(argv[1]);
 
   for (unsigned i=0; i<trees.size(); i++)
-    g_storage_map[trees[i]] = megatree::openStorage("hbase://wgsc3/" + trees[i], megatree::VIZ_FORMAT);
+    g_storage_map[trees[i]] = megatree::openStorage(trees[i], megatree::VIZ_FORMAT);
 
 
   while (true)

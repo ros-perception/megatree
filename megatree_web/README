@@ -14,7 +14,7 @@ Restart apache
 # sudo service apache restart
 
 Run the server
-# megatree_web/run hbase://tree_location
+# megatree_web/run tree_location
 
 Add something like this to your /etc/hosts
 "<your ip address> bhc  bhc.willowgarage.com  megatree.local"
