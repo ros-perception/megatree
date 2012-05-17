@@ -49,6 +49,7 @@ ENDIF (USE_HBASE)
 
 rosbuild_add_library(megatree_storage
   src/disk_storage.cpp
+  src/viz_storage.cpp
   src/storage_factory.cpp
   )
 
