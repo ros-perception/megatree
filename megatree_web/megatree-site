@@ -3,27 +3,27 @@
   ServerName rbh.willowgarage.com
   ServerAlias www.megatree.local
 
-  DocumentRoot /wg/rbh/wim/megatree/megatree/megatree_web
+  DocumentRoot /opt/ros/fuerte/stacks/megatree/megatree_web
   <Directory />
     Options FollowSymLinks
     AllowOverride None
   </Directory>
 
-  Alias /files /wg/rbh/wim/megatree/megatree/megatree_web/bin/server
+  Alias /files /opt/ros/fuerte/stacks/megatree/megatree_web/bin/server
   <Files bin/server>
     SetHandler fastcgi-script
   </Files>
-  #FastCgiServer /wg/rbh/wim/megatree/megatree/megatree_web/bin/server -processes 1 -socket /tmp/fcgi.sock
-  FastCgiExternalServer /wg/rbh/wim/megatree/megatree/megatree_web/bin/server -host 127.0.0.1:9000
+  #FastCgiServer /opt/ros/fuerte/stacks/megatree/megatree_web/bin/server -processes 1 -socket /tmp/fcgi.sock
+  FastCgiExternalServer /opt/ros/fuerte/stacks/megatree/megatree_web/bin/server -host 127.0.0.1:9000
 
-  Alias /algorithm /wg/rbh/wim/megatree/megatree/megatree_web/bin/algorithm_server
+  Alias /algorithm /opt/ros/fuerte/stacks/megatree/megatree_web/bin/algorithm_server
   <Files bin/algorithm_server>
     SetHandler fastcgi-script
   </Files>
-  #FastCgiServer /wg/rbh/wim/megatree/megatree/megatree_web/bin/algorithm_server -processes 1 -socket /tmp/fcgi.sock
-  FastCgiExternalServer /wg/rbh/wim/megatree/megatree/megatree_web/bin/algorithm_server -host 127.0.0.1:9001
+  #FastCgiServer /opt/ros/fuerte/stacks/megatree/megatree_web/bin/algorithm_server -processes 1 -socket /tmp/fcgi.sock
+  FastCgiExternalServer /opt/ros/fuerte/stacks/megatree/megatree_web/bin/algorithm_server -host 127.0.0.1:9001
 
-  <Directory /wg/rbh/wim/megatree/megatree/megatree_web/>
+  <Directory /opt/ros/fuerte/stacks/megatree/megatree_web/>
     Options Indexes FollowSymLinks MultiViews
     AllowOverride None
     Order allow,deny
