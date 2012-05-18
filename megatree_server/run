@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+until spawn-fcgi -n -p 9000  `rospack find megatree_web`/bin/server $1; do
+    echo "File server crashed with exit code $?.  Respawning.." >&2
+    sleep 1
+done
+
+
