@@ -53,7 +53,7 @@ rosbuild_add_library(megatree_storage
   src/storage_factory.cpp
   )
 
-target_link_libraries(megatree_storage boost_iostreams boost_filesystem boost_system boost_program_options)
+target_link_libraries(megatree_storage boost_iostreams boost_filesystem boost_system boost_program_options boost_thread pthread)
 if (USE_HBASE)
   target_link_libraries(megatree_storage thrift)
 ENDIF (USE_HBASE)

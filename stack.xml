@@ -1,8 +1,8 @@
 <stack>
   <description brief="Mega out-of-core Octree">
-    <tt>Megatree</tt> contains packages for large out-of-core octrees
+    <tt>Megatree</tt> contains packages to store pointclouds in large out-of-core octrees, stream compressed pointclouds to thin clients, and view pointclouds in a web browser.
   </description>
-  <author>Wim Meeussen, Eitan Marder-Eppstein, Stuart Glaser</author>
+  <author>Wim Meeussen (wim.meeussen@gmail.com), Eitan Marder-Eppstein, Stuart Glaser</author>
   <license>BSD,GPL,MIT</license>  
   <review status="unreviewed" notes=""/>
 

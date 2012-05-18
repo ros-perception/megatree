@@ -17,7 +17,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 rosbuild_add_executable(server src/server.cpp)
-target_link_libraries(server fcgi)
+target_link_libraries(server fcgi boost_filesystem boost_system)
 
 
 #uncomment if you have defined messages
