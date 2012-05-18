@@ -44,6 +44,6 @@ if (LIBLAS_FOUND)
 endif (LIBLAS_FOUND)
 
 rosbuild_add_executable(import_txt src/import_txt.cpp)
-target_link_libraries(import_txt boost_filesystem)
+target_link_libraries(import_txt boost_filesystem boost_system)
 target_link_libraries(import_txt megatree)
 
