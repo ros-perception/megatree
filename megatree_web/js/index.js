@@ -1081,12 +1081,12 @@ function addTree(tree, metadata)
     triggerFrustumUpdate();
 
     // get views of this tree
-    getViews(tree, 
-	     function(tree_name, view_config_list){
-		 for (var j=0; j<view_config_list.length; j++){
-		     addView(view_config_list[j].name, view_config_list[j], true);
-		 }
-	     });
+    //getViews(tree, 
+	  //   function(tree_name, view_config_list){
+		// for (var j=0; j<view_config_list.length; j++){
+		//     addView(view_config_list[j].name, view_config_list[j], true);
+		// }
+	  //   });
 
 
     // retrun new tree_info object

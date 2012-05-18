@@ -176,10 +176,19 @@ int main(int argc, char** argv)
   //trees.push_back("car");
 
   if (argc > 1)
-    trees.push_back(argv[1]);
+  {
+    std::string arg = argv[1];
+    boost::replace_all(arg, "/", "$2f");
+    trees.push_back(arg);
+  }
 
   for (unsigned i=0; i<trees.size(); i++)
-    g_storage_map[trees[i]] = megatree::openStorage(trees[i], megatree::VIZ_FORMAT);
+  {
+    std::string tree_path = trees[i];
+    boost::replace_all(tree_path, "$2f", "/");
+    printf("Path %s\n", tree_path.c_str());
+    g_storage_map[trees[i]] = megatree::openStorage(tree_path, megatree::VIZ_FORMAT);
+  }
 
 
   while (true)
