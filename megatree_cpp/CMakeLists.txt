@@ -38,7 +38,7 @@ rosbuild_add_library(megatree
   src/megatree.cpp
   src/tree_functions.cpp
   )
-target_link_libraries(megatree boost_filesystem boost_iostreams boost_system)
+target_link_libraries(megatree boost_filesystem boost_iostreams boost_system pthread)
 
 #target_link_libraries(megatree profiler)  # google-perftools profiler
 #target_link_libraries(megatree tcmalloc)  # google-perftools tcmalloc
