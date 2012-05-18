@@ -38,54 +38,44 @@ rosbuild_add_library(megatree
   src/megatree.cpp
   src/tree_functions.cpp
   )
+target_link_libraries(megatree boost_filesystem boost_iostreams boost_system)
 
 #target_link_libraries(megatree profiler)  # google-perftools profiler
 #target_link_libraries(megatree tcmalloc)  # google-perftools tcmalloc
 
 rosbuild_add_executable(bin/memtest src/memtest.cpp)
-target_link_libraries(bin/memtest boost_filesystem boost_iostreams)
 target_link_libraries(bin/memtest megatree)
 
 rosbuild_add_executable(bin/bind src/bind.cpp)
-target_link_libraries(bin/bind boost_filesystem boost_iostreams)
 target_link_libraries(bin/bind megatree)
 
 rosbuild_add_executable(bin/listtest src/listtest.cpp)
-target_link_libraries(bin/listtest boost_filesystem boost_iostreams)
 target_link_libraries(bin/listtest megatree)
 
 rosbuild_add_executable(bin/create src/create.cpp)
-target_link_libraries(bin/create boost_filesystem)
 target_link_libraries(bin/create megatree)
 
 rosbuild_add_executable(bin/analyze src/analyze.cpp)
-target_link_libraries(bin/analyze boost_filesystem boost_system)
 target_link_libraries(bin/analyze megatree)
 
 
 rosbuild_add_executable(bin/benchmark_write src/benchmark_write.cpp)
-target_link_libraries(bin/benchmark_write boost_filesystem boost_iostreams)
 target_link_libraries(bin/benchmark_write megatree)
 
 
 rosbuild_add_executable(bin/benchmark_read src/benchmark_read.cpp)
-target_link_libraries(bin/benchmark_read boost_filesystem boost_iostreams)
 target_link_libraries(bin/benchmark_read megatree)
 
 rosbuild_add_gtest(test/test_basics test/test_basics.cpp)
-target_link_libraries(test/test_basics boost_filesystem boost_iostreams)
 target_link_libraries(test/test_basics megatree)
 
 rosbuild_add_gtest(test/test_list test/test_list.cpp)
-target_link_libraries(test/test_list boost_filesystem boost_iostreams)
 target_link_libraries(test/test_list megatree)
 
 rosbuild_add_executable(bin/fixup_root src/fixup_root.cpp)
-target_link_libraries(bin/fixup_root boost_filesystem boost_iostreams)
 target_link_libraries(bin/fixup_root megatree)
 
 rosbuild_add_gtest(test/test_long_id test/test_long_id.cpp)
-target_link_libraries(test/test_long_id boost_filesystem boost_iostreams)
 target_link_libraries(test/test_long_id megatree)
 
 rosbuild_add_executable(bin/repair_from_children src/repair_from_children.cpp)
