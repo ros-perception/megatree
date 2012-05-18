@@ -67,7 +67,15 @@ target_link_libraries(bin/streaming_server megatree_storage)
 
 rosbuild_add_executable(bin/write src/write.cpp)
 target_link_libraries(bin/write megatree_storage)
+target_link_libraries(bin/write boost_iostreams boost_filesystem boost_system boost_program_options boost_thread pthread)
+if (USE_HBASE)
+  target_link_libraries(bin/write thrift)
+ENDIF (USE_HBASE)
 
 rosbuild_add_executable(bin/read src/read.cpp)
 target_link_libraries(bin/read megatree_storage)
+target_link_libraries(bin/read boost_iostreams boost_filesystem boost_system boost_program_options boost_thread pthread)
+if (USE_HBASE)
+  target_link_libraries(bin/read thrift)
+ENDIF (USE_HBASE)
 
