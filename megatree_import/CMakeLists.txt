@@ -43,7 +43,7 @@ if (LIBLAS_FOUND)
   target_link_libraries(sort_las megatree)
 endif (LIBLAS_FOUND)
 
-rosbuild_add_executable(import_txt src/import_txt.cpp)
-target_link_libraries(import_txt boost_filesystem)
-target_link_libraries(import_txt megatree)
+rosbuild_add_executable(import_pts src/import_pts.cpp)
+target_link_libraries(import_pts boost_filesystem)
+target_link_libraries(import_pts megatree)
 
