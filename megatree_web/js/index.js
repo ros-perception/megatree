@@ -728,12 +728,17 @@ function onMouseUp (evt) {
       assert(selection);
       // box selection
       if (!selection.isPoint()){  
-	console.log("selection of a box");
+        console.log("selection of a box");
         var cursor_coords = getCursorPosition(evt);
         selection.setEndPoint(computePickRay(cursor_coords[0], cursor_coords[1]).ray);
       }
       else{
-	console.log("selection of a single point " + selection.getPoint()[0] + " " + selection.getPoint()[1] + " " + selection.getPoint()[2]);
+        console.log("selection of a single point " + selection.getPoint()[0] + " " + selection.getPoint()[1] + " " + selection.getPoint()[2]);
+        if(selection_cloud.vertices.length < 1)
+        {
+          selection_cloud.vertices.push([0, 0, 1]);
+          selection_cloud.colors.push([1, 0, 0]);
+        }
         selection_cloud.vertices[0] = selection.getPoint();
         selection_cloud.colors[0] = [1.0, 0.0, 0.0];
         selection_cloud.setupGL(ctx);
@@ -1458,8 +1463,6 @@ function start() {
   selection_cloud = new PointCloud();
   selection_cloud.vertices = [];
   selection_cloud.colors = []
-  selection_cloud.vertices.push([0, 0, 1]);
-  selection_cloud.colors.push([1, 0, 0]);
   selection_cloud.setupGL(ctx);
 
 
