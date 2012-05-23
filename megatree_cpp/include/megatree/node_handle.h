@@ -148,6 +148,8 @@ public:
 
   void copyFromChildNodes(NodeHandle children[8])
   {
+    modified = true;
+
     Node* node_children[8];
     for (unsigned i=0; i<8; i++)
       if (children[i].isValid())
@@ -169,6 +171,8 @@ public:
     assert(node_file);
     node_file->waitUntilLoaded();
   }
+
+  friend class NodeCache;
 
   
 private:

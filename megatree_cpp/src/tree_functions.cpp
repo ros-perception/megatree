@@ -87,6 +87,8 @@ void addPointRecursive(MegaTree& tree, NodeHandle& node,
 
 
 
+
+
 void addPoint(MegaTree& tree, const std::vector<double>& pt, const std::vector<double>& col)
 {
   // check tree bounds
@@ -111,6 +113,83 @@ void addPoint(MegaTree& tree, const std::vector<double>& pt, const std::vector<d
 
 
 
+void TreeFastCache::addPoint(std::vector<double> &pt, const std::vector<double>& col)
+{
+  // go through nodes to find closest node
+  while (!nodes.back().nh->getNodeGeometry().contains(pt)){
+    NodeHandle* back_nh = nodes.back().nh;
+    tree.releaseNode(*back_nh);
+    delete back_nh;
+    nodes.pop_back();
+  }
+  assert(!nodes.empty());
+
+  // add point 
+  this->addPointRecursive(&pt[0], &col[0], tree.getMinCellSize());
+
+  // update summary points
+  std::list<NodeCache>::reverse_iterator child_node = nodes.rbegin();
+  std::list<NodeCache>::reverse_iterator parent_node = child_node;
+  parent_node++;
+  while (child_node != nodes.rend() && parent_node != nodes.rend()){
+    std::list<NodeCache>::reverse_iterator child_node = parent_node;
+    parent_node->addPoint(*child_node);
+    child_node++;
+    parent_node++;
+  }
+}
+
+
+void TreeFastCache::addPointRecursive(const double pt[3], const double color[3], double point_accuracy)
+{
+  assert(!nodes.empty());
+  NodeHandle* nh = nodes.back().nh;
+  assert(nh);
+  double node_cell_size = nh->getNodeGeometry().getSize();
+
+  // adds point to empty node
+  if (nh->isEmpty() && point_accuracy >= node_cell_size / BITS_D)
+  {
+    nh->setPoint(pt, color);
+    return;
+  }
+    
+  // reached maximum resultion of the tree
+  if (node_cell_size < tree.getMinCellSize())
+  {
+    nh->addPoint(pt, color);
+    return;
+  }
+
+
+  // this node is a leaf, and we need to copy the original point one level down
+  if (!nh->isEmpty() && nh->isLeaf())
+  {
+    // Determines which child the point should be added to.
+    uint8_t original_child = nh->getChildForNodePoint();
+    NodeHandle new_leaf;
+    tree.createChildNode(*nh, original_child, new_leaf);
+
+    nh->getNode()->copyToChildNode(original_child, new_leaf.getNode());
+    tree.releaseNode(new_leaf);
+  }
+
+  // Gets the child node to recurse on.
+  uint8_t new_child = nh->getNodeGeometry().whichChild(pt);
+  NodeHandle* new_child_nh = NULL;
+  if (nh->hasChild(new_child)) {
+    new_child_nh = tree.getChildNode(*nh, new_child);
+    new_child_nh->waitUntilLoaded();
+  }
+  else {
+    new_child_nh = tree.createChildNode(*nh, new_child);
+  }
+
+  // recursion to add point to child
+  nodes.push_back(NodeCache(new_child_nh, tree));
+
+  addPointRecursive(pt, color, point_accuracy);
+}
 
 
 
@@ -249,7 +328,7 @@ void queryRange(MegaTree &tree, const std::vector<double>& lo, const std::vector
   if (results.size() > 0)
     fprintf(stderr, "Warning: called queryRange with non-empty results\n");
 
-  NodeHandle root;
+    NodeHandle root;
   tree.getRoot(root);
   double range_mid[3];
   range_mid[0] = (hi[0] + lo[0])/2;

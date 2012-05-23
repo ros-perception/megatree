@@ -266,6 +266,7 @@ public:
     return *this;
   }
 
+  friend class NodeCache;
 private:
   Count count;
   Point point[3];

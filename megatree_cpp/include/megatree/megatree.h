@@ -49,10 +49,13 @@ namespace megatree
 
     // create nodes always blocking
     void createChildNode(NodeHandle& parent_node, uint8_t child, NodeHandle& child_node);
+    NodeHandle* createChildNode(NodeHandle& parent_node, uint8_t child);
 
     // Methods for getting nodes.  The caller must release the returned node.
     void getRoot(NodeHandle &root_node);
+    NodeHandle* getRoot();
     void getChildNode(const NodeHandle& parent_node, uint8_t child, NodeHandle &child_node);
+    NodeHandle* getChildNode(const NodeHandle& parent_node, uint8_t child);
 
     // cache functions
     void flushCache();
@@ -168,7 +171,6 @@ namespace megatree
 
 
   public:
-
     class ChildIterator
     {
     public:

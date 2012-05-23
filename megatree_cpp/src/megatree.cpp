@@ -331,6 +331,12 @@ void MegaTree::releaseNodeFile(NodeFile*& node_file)
 
 
 
+NodeHandle* MegaTree::createChildNode(NodeHandle& parent_node, uint8_t child)
+{
+  NodeHandle* nh = new NodeHandle;
+  createChildNode(parent_node, child, *nh);
+  return nh;
+}
 
 
 // Create a new node that does not exist yet
@@ -379,7 +385,12 @@ void MegaTree::createChildNode(NodeHandle& parent_node, uint8_t child, NodeHandl
   releaseNodeFile(child_file);  // we have a Node from this file, so unlock file
 }
 
-
+NodeHandle* MegaTree::getChildNode(const NodeHandle& parent_node, uint8_t child)
+{
+  NodeHandle* nh = new NodeHandle;
+  getChildNode(parent_node, child, *nh);
+  return nh;
+}
 
 // Get a child node form a parent node
 void MegaTree::getChildNode(const NodeHandle& parent_node, uint8_t child, NodeHandle& child_node_handle)
@@ -613,6 +624,13 @@ void MegaTree::getRoot(NodeHandle &root_node_handle)
 
   root_node_handle.initialize(root_node, root_id, root_file, root_geometry);
   root_file->removeUser();
+}
+
+NodeHandle* MegaTree::getRoot()
+{
+  NodeHandle* nh = new NodeHandle;
+  getRoot(*nh);
+  return nh;
 }
 
 void MegaTree::dumpNodesInUse()

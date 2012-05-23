@@ -31,6 +31,9 @@ void importTxt(MegaTree &tree, const boost::filesystem::path &path, unsigned lon
   std::vector<double> point(3, 0.0);
   std::vector<double> color(3, 0.0);
 
+  // construct fast adding structure
+  TreeFastCache tree_cache(tree);
+
   while (!fin.eof())
   {
     fin.getline(line, 1024);
@@ -53,7 +56,7 @@ void importTxt(MegaTree &tree, const boost::filesystem::path &path, unsigned lon
       printf("%8.1f   %s\n", overall_timer.toc(), tree.toString().c_str());
       tree.resetCount();
     }
-    addPoint(tree, point, color);
+    tree_cache.addPoint(point, color);
 
     ++total_points;
     /*
