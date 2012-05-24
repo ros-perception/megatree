@@ -84,6 +84,7 @@ public:
     Color* child_col = child_cache.nh->getNode()->color;
     Point* pnt = nh->getNode()->point;
     Color* col = nh->getNode()->color;
+    uint64_t&  cnt = nh->getNode()->count;
 
     sum_point[0] += child_pnt[0] + child_offset[0];
     sum_point[1] += child_pnt[1] + child_offset[1];
@@ -102,6 +103,8 @@ public:
     col[0] = sum_color[0] / count;
     col[1] = sum_color[1] / count;
     col[2] = sum_color[2] / count;
+
+    cnt++;
   }
 
   NodeHandle* nh;

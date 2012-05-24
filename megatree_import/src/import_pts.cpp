@@ -52,7 +52,7 @@ void importTxt(MegaTree &tree, const boost::filesystem::path &path, unsigned lon
     color[2] = atoi(bits[6].c_str());
     
     if (i % 100000 == 0) {
-      //printf("Adding %u\n", i);
+      printf("Adding %u\n", i);
       printf("%8.1f   %s\n", overall_timer.toc(), tree.toString().c_str());
       tree.resetCount();
     }
