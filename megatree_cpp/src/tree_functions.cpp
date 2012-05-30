@@ -116,34 +116,17 @@ void addPoint(MegaTree& tree, const std::vector<double>& pt, const std::vector<d
 void TreeFastCache::addPoint(std::vector<double> &pt, const std::vector<double>& col)
 {
   // go through nodes to find closest node
-  while (!nodes.back().nh->getNodeGeometry().contains(pt)){
-    NodeHandle* back_nh = nodes.back().nh;
-    tree.releaseNode(*back_nh);
-    delete back_nh;
-    nodes.pop_back();
-  }
-  assert(!nodes.empty());
+  while (!top().nh->getNodeGeometry().contains(pt))
+    pop();
 
   // add point 
   this->addPointRecursive(&pt[0], &col[0], tree.getMinCellSize());
-
-  // update summary points
-  std::list<NodeCache>::reverse_iterator child_node = nodes.rbegin();
-  std::list<NodeCache>::reverse_iterator parent_node = child_node;
-  parent_node++;
-  while (child_node != nodes.rend() && parent_node != nodes.rend()){
-    std::list<NodeCache>::reverse_iterator child_node = parent_node;
-    parent_node->addPoint(*child_node);
-    child_node++;
-    parent_node++;
-  }
 }
 
 
 void TreeFastCache::addPointRecursive(const double pt[3], const double color[3], double point_accuracy)
 {
-  assert(!nodes.empty());
-  NodeHandle* nh = nodes.back().nh;
+  NodeHandle* nh = top().nh;
   assert(nh);
   double node_cell_size = nh->getNodeGeometry().getSize();
 
@@ -186,7 +169,7 @@ void TreeFastCache::addPointRecursive(const double pt[3], const double color[3],
   }
 
   // recursion to add point to child
-  nodes.push_back(NodeCache(new_child_nh, tree));
+  push(NodeCache(new_child_nh));
 
   addPointRecursive(pt, color, point_accuracy);
 }

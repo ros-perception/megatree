@@ -7,6 +7,9 @@
 #include "megatree/node.h"
 #include "megatree/megatree.h"
 
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+#include <stdio.h>
 
 namespace megatree
 {
@@ -36,83 +39,94 @@ void rangeQueryLoop(MegaTree& tree, std::vector<double> lo, std::vector<double> 
 class NodeCache
 {
 public:
-  NodeCache(NodeHandle* nh_p, MegaTree& tree)
-    : nh(nh_p),
-      count(0)
+  NodeCache(NodeHandle* nh_p)
+    : nh(nh_p)
   {
-    for (unsigned i=0; i<3; i++){
-      sum_point[i] = 0;
-      sum_color[i] = 0;
-    }
-
-    for (unsigned int i = 0; i < 8; i++)
-    {
-      if (nh->hasChild(i))
-      {
-        NodeHandle child_nh;
-        tree.getChildNode(*nh, i, child_nh);
-        const Count& child_cnt = child_nh.getNode()->count;
-        const Point* child_pnt = child_nh.getNode()->point;
-        const Color* child_col = child_nh.getNode()->color;
-        
-        uint64_t child_offset[3];
-        nh->getNode()->getChildBitOffset(i, child_offset);
-
-        sum_point[0] += child_cnt * (child_pnt[0] + child_offset[0]);
-        sum_point[1] += child_cnt * (child_pnt[1] + child_offset[1]);
-        sum_point[2] += child_cnt * (child_pnt[2] + child_offset[2]);
-
-        sum_color[0] += child_cnt * child_col[0];
-        sum_color[1] += child_cnt * child_col[1];
-        sum_color[2] += child_cnt * child_col[2];
-
-        // TODO: sum will overflow at some point.
-        count += child_cnt;
-        tree.releaseNode(child_nh);
-      }
-    }
-  }
-
-
-  void addPoint(NodeCache& child_cache)
-  {
-    uint64_t child_offset[3];
-    nh->modified = true;
-    nh->getNode()->getChildBitOffset(child_cache.node_id, child_offset);
-
-    Point* child_pnt = child_cache.nh->getNode()->point;
-    Color* child_col = child_cache.nh->getNode()->color;
+    // copy value of original point
+    orig_cnt = nh->getCount();
     Point* pnt = nh->getNode()->point;
     Color* col = nh->getNode()->color;
-    uint64_t&  cnt = nh->getNode()->count;
-
-    sum_point[0] += child_pnt[0] + child_offset[0];
-    sum_point[1] += child_pnt[1] + child_offset[1];
-    sum_point[2] += child_pnt[2] + child_offset[2];
-    
-    sum_color[0] += child_col[0];
-    sum_color[1] += child_col[1];
-    sum_color[2] += child_col[2];
-
-    count += 1;
-
-    pnt[0] = (sum_point[0] / count) >> 1;
-    pnt[1] = (sum_point[1] / count) >> 1;
-    pnt[2] = (sum_point[2] / count) >> 1;
-
-    col[0] = sum_color[0] / count;
-    col[1] = sum_color[1] / count;
-    col[2] = sum_color[2] / count;
-
-    cnt++;
+    for (unsigned i=0; i<3; i++){
+      orig_pnt[i] = pnt[i];
+      orig_col[i] = col[i];
+    }
   }
 
+  NodeCache(const NodeCache& nc)
+  {
+    nh = nc.nh;
+    orig_cnt= nc.orig_cnt;
+    
+    for (unsigned i=0; i<3; i++){
+      orig_pnt[i] = nc.orig_pnt[i];
+      orig_col[i] = nc.orig_col[i];
+    }
+  }
+
+  NodeCache& operator =(const NodeCache& nc)
+  {
+    nh = nc.nh;
+    orig_cnt= nc.orig_cnt;
+    
+    for (unsigned i=0; i<3; i++){
+      orig_pnt[i] = nc.orig_pnt[i];
+      orig_col[i] = nc.orig_col[i];
+    }
+    return *this;
+  }
+
+
+  ~NodeCache()
+  {
+  }
+
+
+  // add sum info to NodeHandle
+  void release(MegaTree& tree)
+  {
+    tree.releaseNode(*nh);
+    delete nh;
+    nh = NULL;
+  }
+
+
+  void mergeChild(const NodeCache& nc)
+  {
+    assert(nc.nh);
+    assert(nh);
+
+    // child offset
+    uint64_t child_offset[3];
+    nh->getNode()->getChildBitOffset(nc.nh->getId().getChildNr(), child_offset);
+
+    // compute difference between original child node and the  current child node
+    uint64_t child_cnt_curr = nc.nh->getCount();
+    uint64_t diff_sum_pnt[3], diff_sum_col[3];
+    uint64_t diff_cnt = child_cnt_curr-nc.orig_cnt;
+    for (unsigned i=0; i<3; i++){
+      diff_sum_pnt[i] = nc.nh->getNode()->point[i]*child_cnt_curr - nc.orig_pnt[i]*nc.orig_cnt + child_offset[i]*diff_cnt;
+      diff_sum_col[i] = nc.nh->getNode()->color[i]*child_cnt_curr - nc.orig_col[i]*nc.orig_cnt;
+    }    
+
+    // update point of this node
+    Point* pnt = nh->getNode()->point;
+    Color* col = nh->getNode()->color;
+    uint64_t& cnt = nh->getNode()->count;
+    for (unsigned i=0; i<3; i++){
+      pnt[i] = (pnt[i]*cnt + diff_sum_pnt[i]) / (cnt + diff_cnt);
+      col[i] = (col[i]*cnt + diff_sum_col[i]) / (cnt + diff_cnt);
+    }
+    cnt += diff_cnt;
+  }
+
+
   NodeHandle* nh;
-  uint64_t sum_point[3];
-  uint64_t sum_color[3];
-  uint64_t count;
-  uint8_t node_id;
+  uint64_t orig_pnt[3];
+  uint64_t orig_col[3];
+  uint64_t orig_cnt;
 };
+
+
 
 
 class TreeFastCache
@@ -121,27 +135,53 @@ public:
   TreeFastCache(MegaTree &tree_p):
     tree(tree_p)
   {
-    NodeHandle* root = tree.getRoot();
-    nodes.push_back(NodeCache(root, tree));
+    push(NodeCache(tree.getRoot()));
   }
 
   ~TreeFastCache()
   {
-    while (!nodes.empty()){
-      NodeHandle* n = nodes.back().nh;
-      tree.releaseNode(*n);
-      delete n;
-      nodes.pop_back();
-    }
+    while (!nodes.empty())
+      pop();
+  }
+
+  void clear()
+  {
+    while (!nodes.empty())
+      pop();
+
+    push(NodeCache(tree.getRoot()));
   }
 
   void addPoint(std::vector<double> &pt, const std::vector<double>& color = std::vector<double>(3, 0));
 
 
 private:
+  NodeCache& top()
+  {
+    assert(!nodes.empty());
+    return nodes.top();
+  }
+
+  void push(NodeCache nc)
+  {
+    nodes.push(nc);
+  }
+
+  void pop()
+  {
+    assert(!nodes.empty());
+
+    NodeCache child = nodes.top();
+    nodes.pop();
+    if (!nodes.empty())
+      nodes.top().mergeChild(child);
+
+    child.release(tree);  // after this, the child is written and destroyed
+  }
+
   void addPointRecursive(const double pt[3], const double color[3], double point_accuracy);
 
-  std::list<NodeCache> nodes;
+  std::stack<NodeCache> nodes;
   MegaTree& tree;
 };
 
