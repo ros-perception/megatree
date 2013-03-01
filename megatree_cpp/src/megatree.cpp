@@ -99,7 +99,7 @@ MegaTree::~MegaTree()
 
         if (to_delete)
           delete to_delete;
-      
+
       }
     }
     // sleep
@@ -149,7 +149,7 @@ void MegaTree::initTree(boost::shared_ptr<Storage> _storage, const std::vector<d
          root_geometry.getHi(0), root_geometry.getHi(1), root_geometry.getHi(2),
          subtree_width, subfolder_depth);
 }
-  
+
 
 
 
@@ -274,27 +274,27 @@ NodeFile* MegaTree::getNodeFile(const IdType& file_id)
     if (!it.finished())
     {
       count_hit++;
-      
+
       file = it.get();
-      
+
       //lock the file
       boost::mutex::scoped_lock file_lock(file->mutex);
-      
+
       assert(file->getNodeState() != INVALID);
-      
+
       //we need to check if this file is being evicted, and set the state to loading
       if(file->getNodeState() == EVICTING)
         file->setNodeState(LOADING);
-      
+
       file->addUser();  // make sure file cannot get deleted in cache maintenance
-      
+
       // Now that the write pointer is definitely elsewhere, moves
       // this file to the front on the LRU cache.
       file_cache.move_to_front(it);
     }
-  }    
-   
- 
+  }
+
+
   // The file wasn't found in the cache, so we load it from storage.
   if (!file)
   {
@@ -306,10 +306,10 @@ NodeFile* MegaTree::getNodeFile(const IdType& file_id)
     // create new nodefile
     file = new NodeFile(path, node_allocator);
     file->addUser();  // make sure file cannot get deleted in cache maintenance
-    
+
     // Async request to read the nodefile
     storage->getAsync(path, boost::bind(&MegaTree::readNodeFileCb, this, file, _1));
-    
+
     // add nodefile to cache
     {
       boost::mutex::scoped_lock lock(file_cache_mutex);
@@ -361,7 +361,7 @@ void MegaTree::createChildNode(NodeHandle& parent_node, uint8_t child, NodeHandl
   uint8_t which_child_file = child_file_id.getChildNr();
   if (child_file_id.isRootFile() || parent_node_file->hasChildFile(which_child_file))
   {
-    child_file = getNodeFile(child_file_id);  
+    child_file = getNodeFile(child_file_id);
     child_file->waitUntilLoaded();  // always blocking for creating nodes
   }
   else
@@ -402,7 +402,7 @@ void MegaTree::getChildNode(const NodeHandle& parent_node, uint8_t child, NodeHa
   NodeGeometry child_geometry = parent_node.getNodeGeometry().getChild(child);
 
   // retrieve the child from the nodefile
-  NodeFile* child_file = getNodeFile(child_file_id);  
+  NodeFile* child_file = getNodeFile(child_file_id);
 
   // unlock file after we got a node from the file
   Node* child_node = NULL;
@@ -455,7 +455,7 @@ void MegaTree::releaseNode(NodeHandle& node_handle)
 void MegaTree::flushCache()
 {
   boost::mutex::scoped_lock lock(file_cache_mutex);
-  boost::condition condition;  
+  boost::condition condition;
   boost::mutex mutex;
 
   // iterate over all files, and write data
@@ -482,9 +482,9 @@ void MegaTree::flushCache()
       // get data to write
       ByteVec byte_data;
       file_it.get()->serialize(byte_data);
-      
+
       // start asynchronous writing
-      storage->putAsync(file_it.get()->getPath(), byte_data, 
+      storage->putAsync(file_it.get()->getPath(), byte_data,
                         boost::bind(&MegaTree::flushNodeFileCb, this, file_it, boost::ref(mutex), boost::ref(condition), boost::ref(remaining)));
     }
   }
@@ -653,7 +653,7 @@ void MegaTree::flushNodeFileCb(CacheIterator<IdType, NodeFile> it, boost::mutex&
   // Locks the node file
   boost::mutex::scoped_lock file_lock(it.get()->mutex);
 
-  // File is written 
+  // File is written
   it.get()->setWritten();
   count_file_write++;
 
@@ -670,11 +670,14 @@ void MegaTree::evictNodeFileCb(CacheIterator<IdType, NodeFile> it)
 {
   NodeFile* delete_file(NULL);
   {
+    // Locks the cache
+    boost::mutex::scoped_lock lock(file_cache_mutex);
+
     // Locks the node file
     boost::mutex::scoped_lock file_lock(it.get()->mutex);
     NodeState state = it.get()->getNodeState();
 
-    // File is written 
+    // File is written
     assert(it.get()->isModified());
     it.get()->setWritten();
     count_file_write++;
@@ -687,7 +690,6 @@ void MegaTree::evictNodeFileCb(CacheIterator<IdType, NodeFile> it)
       delete_file = it.get();  // postpone delete
 
       // update file cache
-      boost::mutex::scoped_lock lock(file_cache_mutex);
       current_cache_size -= it.get()->cacheSize();
       current_write_size -= it.get()->cacheSize();
       file_cache.erase(it);
@@ -701,7 +703,7 @@ void MegaTree::evictNodeFileCb(CacheIterator<IdType, NodeFile> it)
 
       // update file cache
       boost::mutex::scoped_lock lock(file_cache_mutex);
-      current_write_size -= it.get()->cacheSize();   
+      current_write_size -= it.get()->cacheSize();
     }
   }
 
