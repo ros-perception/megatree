@@ -64,6 +64,39 @@ class SpinLock
     pthread_spinlock_t spinlock;
 };
 
+
+class Cond
+{
+public:
+  Cond(): cond(false)
+  {
+  }
+
+  void wait(SpinLock& spinlock)
+  {
+    cond = false;
+    spinlock.unlock();
+    //TODO: There has just got to be a better way than having to write a custom
+    //while loop here. The pthread_cond stuff won't take a pthread_spinlock as
+    //input though and I cannot for the life of me figure out how to get the
+    //mutex that, I think, is contained within the pthread_spinlock... ugh
+    //swap this out for something better... please
+    while(!cond)
+      usleep(10);
+    spinlock.lock();
+  }
+
+  void notify_all()
+  {
+    cond = true;
+  }
+
+private:
+  bool cond;
+};
+
+
+
 enum NodeState
 {
   INVALID,
@@ -80,12 +113,12 @@ class NodeFile
   typedef Allocator<std::pair<ShortId, Node*> > PairAllocator;
 
 public:
-  NodeFile(const boost::filesystem::path& _path, 
+  NodeFile(const boost::filesystem::path& _path,
            boost::shared_ptr<NodeAllocator> _node_allocator = boost::shared_ptr<NodeAllocator>(),
            boost::shared_ptr<PairAllocator> _pair_allocator = boost::shared_ptr<PairAllocator>())
   : node_state(LOADING), path(_path),
-    child_files(0), 
-    node_allocator(_node_allocator), pair_allocator(_pair_allocator), 
+    child_files(0),
+    node_allocator(_node_allocator), pair_allocator(_pair_allocator),
     use_count(0) {}
 
   ~NodeFile();
@@ -184,7 +217,8 @@ public:
 private:
 
   SpinLock node_state_mutex;
-  boost::condition node_state_condition;
+  //  boost::condition node_state_condition;
+  Cond node_state_condition;
   NodeState node_state;
 
   boost::filesystem::path path;

@@ -10,7 +10,7 @@ namespace megatree
 void NodeFile::deserialize()
 {
   is_modified = true;
-  
+
   // signal conditions that are waiting for initialization
   SpinLock::ScopedLock lock(node_state_mutex);
   node_state = LOADED;
@@ -28,7 +28,7 @@ void NodeFile::deserialize(const ByteVec &buffer)
   memcpy(&child_files, (void*)&buffer[offset], 1);
   offset += 1;
 
-  // Reads all the nodes 
+  // Reads all the nodes
   while (offset < buffer.size())
   {
     ShortId short_id;
@@ -111,7 +111,7 @@ void NodeFile::serializeBytesize(ByteVec& buffer)
     buffer[offset + 3] = it->second->color[0];
     buffer[offset + 4] = it->second->color[1];
     buffer[offset + 5] = it->second->color[2];
-    
+
     offset += STRIDE;
   }
 }
@@ -120,17 +120,18 @@ void NodeFile::serializeBytesize(ByteVec& buffer)
 // use condition variable to wait for initialization
 void NodeFile::waitUntilLoaded()
 {
-
-  boost::mutex dummy_mutex;
-  boost::mutex::scoped_lock dummy_lock(dummy_mutex);
+  //TODO: Decide what to do with conditions here
+  //boost::mutex dummy_mutex;
+  //boost::mutex::scoped_lock dummy_lock(dummy_mutex);
   while (true)
   {
     {
       SpinLock::ScopedLock lock(node_state_mutex);
       if(node_state == LOADED)
         break;
+      node_state_condition.wait(node_state_mutex);
     }
-    node_state_condition.wait(dummy_lock);
+    //node_state_condition.wait(dummy_lock);
   }
 }
 
@@ -166,7 +167,7 @@ NodeFile::~NodeFile()
   if (is_modified)
     fprintf(stderr, "Destructing NodeFile %s that was not written to disk\n", path.string().c_str());
 
-  if (users() != 0) 
+  if (users() != 0)
     fprintf(stderr, "NodeFile %s destructing while %d nodes are still in use!\n", path.string().c_str(), users());
 }
 
@@ -195,7 +196,7 @@ Node* NodeFile::readNode(const ShortId& short_id)
 
       return node;
     }
-    
+
     // bad situation
     fprintf(stderr, "Could not find node with short_id %o in %s with %d nodes\n",
             short_id, path.string().c_str(), (int)node_cache.size());
@@ -208,7 +209,7 @@ Node* NodeFile::readNode(const ShortId& short_id)
     //abort();
     return NULL;
   }
-  
+
   use_count++;
 
   return it->second;
@@ -247,7 +248,7 @@ void NodeFile::initializeFromChildren(const boost::filesystem::path &_path,
       for (NodeCache::iterator it = children[i]->node_cache.begin(); it != children[i]->node_cache.end(); ++it)
       {
         uint8_t which_child = it->first & 7;
-        
+
         // Determines the parent node for this node
         ShortId parent_short_id = short_id_prefix + (it->first >> 3);
 
@@ -285,7 +286,7 @@ void NodeFile::initializeRootNodeFile(const boost::filesystem::path &_path, Node
   {
     printf("Looping\n");
     //   1. Groups the nodes in the last level by parent.
-    
+
     typedef std::map<ShortId, std::vector<Node*> > ParentGrouping;
     ParentGrouping parent_groupings;  // parent short id  ->  8 child nodes
 
@@ -300,7 +301,7 @@ void NodeFile::initializeRootNodeFile(const boost::filesystem::path &_path, Node
     for (NodeCache::iterator it = last_level.begin(); it != last_level.end(); ++it)
     {
       uint8_t which_child = it->first & 7;
-        
+
       // Determines the parent node for this node
       ShortId parent_short_id = short_id_prefix + (it->first >> 3);
 
@@ -324,7 +325,7 @@ void NodeFile::initializeRootNodeFile(const boost::filesystem::path &_path, Node
     }
 
     //     3. Inserts the parent nodes into nodefile f
-    
+
     node_cache.insert(last_level.begin(), last_level.end());
 
     condensing_f1 = false;
@@ -357,7 +358,7 @@ void NodeFile::releaseNode(Node* node, const ShortId& short_id, bool modified)
 {
   assert(use_count > 0);  // Sanity check that we're not releasing more nodes than were created.
   //assert(node_cache.find(short_id) != node_cache.end());
-  
+
   is_modified = is_modified || modified;
   use_count--;
 }
