@@ -14,6 +14,7 @@
 
   <rosdep name="eigen"/>
   <rosdep name="gtest"/>
+  <rosdep name="rostest"/>
 
   <export>
     <cpp cflags="-I${prefix}/include `rosboost-cfg --cflags`" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib `rosboost-cfg --lflags thread` -lmegatree"/>
